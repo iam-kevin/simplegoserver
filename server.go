@@ -1,0 +1,55 @@
+package simplegoserver
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+
+	"github.com/go-chi/chi/v5"
+)
+
+func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Kill)
+	defer stop()
+
+	r := chi.NewMux()
+
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	server := &http.Server{
+		Addr:    fmt.Sprint(":%s", port),
+		Handler: r,
+	}
+
+	// This thing counts every second
+	go func() {
+		count := 1
+		for {
+			slog.Debug(fmt.Sprint("Count ", count))
+		}
+	}()
+
+	serverr := make(chan error, 1)
+	go func() {
+		serverr <- server.ListenAndServe()
+	}()
+
+	select {
+	case err := <-serverr:
+		{
+			slog.Error("Something wen't wrong", "reason", err.Error())
+		}
+	case <-ctx.Done():
+		{
+			if err := ctx.Err(); err != nil {
+				slog.Debug("Something went wrong", "error", err.Error())
+			}
+		}
+	}
+}
