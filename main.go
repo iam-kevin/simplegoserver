@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -38,18 +39,20 @@ func main() {
 		fmt.Fprint(w, "Hello world!")
 	})
 
-	// This thing counts every second
-	// go func() {
-	// 	count := 1
-	// 	for {
-	// 		slog.Debug(fmt.Sprint("Count ", count))
-	// 	}
-	// }()
-
 	serverr := make(chan error, 1)
 	go func() {
 		slog.Debug("Listening to server", "port", port)
 		serverr <- server.ListenAndServe()
+	}()
+
+	// This thing print value every second
+	go func() {
+		count := 1
+		for {
+			slog.Debug("Counting...", "count", count)
+			time.Sleep(time.Second * 1)
+			count += 1
+		}
 	}()
 
 	select {
