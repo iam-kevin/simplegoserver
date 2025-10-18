@@ -19,7 +19,7 @@ func init() {
 }
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Kill)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer stop()
 
 	r := chi.NewMux()
