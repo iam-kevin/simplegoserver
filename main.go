@@ -28,12 +28,12 @@ func main() {
 	}
 
 	// This thing counts every second
-	go func() {
-		count := 1
-		for {
-			slog.Debug(fmt.Sprint("Count ", count))
-		}
-	}()
+	// go func() {
+	// 	count := 1
+	// 	for {
+	// 		slog.Debug(fmt.Sprint("Count ", count))
+	// 	}
+	// }()
 
 	serverr := make(chan error, 1)
 	go func() {

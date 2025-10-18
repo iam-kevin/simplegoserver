@@ -1,0 +1,5 @@
+script: |
+    GOOS=linux CGO_ENABLED=1 go build -o ./shipit
+    chmod +x shipit
+
+run: ./shipit
