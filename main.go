@@ -27,6 +27,11 @@ func main() {
 		Handler: r,
 	}
 
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "hello world")
+	})
+
 	// This thing counts every second
 	// go func() {
 	// 	count := 1
