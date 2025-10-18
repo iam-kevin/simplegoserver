@@ -1,4 +1,4 @@
-package simplegoserver
+package main
 
 import (
 	"context"
@@ -10,6 +10,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 )
+
+func init() {
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdin, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	})))
+}
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Kill)
@@ -23,13 +29,13 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:    fmt.Sprint(":%s", port),
+		Addr:    fmt.Sprintf(":%s", port),
 		Handler: r,
 	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "hello world")
+		fmt.Fprint(w, "Hello world!")
 	})
 
 	// This thing counts every second
@@ -42,13 +48,14 @@ func main() {
 
 	serverr := make(chan error, 1)
 	go func() {
+		slog.Debug("Listening to server", "port", port)
 		serverr <- server.ListenAndServe()
 	}()
 
 	select {
 	case err := <-serverr:
 		{
-			slog.Error("Something wen't wrong", "reason", err.Error())
+			slog.Error("something went wrong", "reason", err.Error())
 		}
 	case <-ctx.Done():
 		{
