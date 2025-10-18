@@ -45,7 +45,8 @@ func main() {
 		serverr <- server.ListenAndServe()
 	}()
 
-	// This thing print value every second
+	// Prints every second
+	// Want to see what shows up on the logs
 	go func() {
 		count := 1
 		for {
@@ -63,7 +64,9 @@ func main() {
 	case <-ctx.Done():
 		{
 			if err := ctx.Err(); err != nil {
-				slog.Debug("Something went wrong", "error", err.Error())
+				slog.Debug("something went wrong", "error", err.Error())
+			} else {
+				slog.Debug("closed gracefully")
 			}
 		}
 	}
